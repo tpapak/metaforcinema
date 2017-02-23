@@ -6,7 +6,7 @@ library(meta)
 library(jsonlite)
 library(plyr)
 
-D <- indata
+D <- fromJSON(indata)
 
 #pairwise meta-analysis
 
