@@ -5,7 +5,6 @@ getComparisonContribution <- function(indata,type,model="fixed",tau=NA, sm, comp
 
   c1 <- getHatMatrix (indata,type,model,tau, sm)
   hatMatrix <- c1$H2bu
-  # print(hatMatrix)
 
   split <- function (dir) {strsplit(dir,":")}
 
@@ -161,5 +160,6 @@ print(test3==0)
   contribution <- 100 * contribution
 
   # return(list(gg=gg,g=dg,hatMatrix=c1,contribution=contribution))
-  return(list(contribution=contribution))
+  return(list(contribution=contribution,
+              names=directs))
 }
