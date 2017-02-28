@@ -2,11 +2,10 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   library(netmeta)
   library(meta)
-  library(jsonlite)
   library(plyr)
   
-  D <- fromJSON(indata)
-  # D <- indata
+  # D <- fromJSON(indata)
+  D <- indata
   
   #pairwise meta-analysis
   
