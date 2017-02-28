@@ -161,5 +161,5 @@ print(test3==0)
   contribution <- 100 * contribution
 
   # return(list(gg=gg,g=dg,hatMatrix=c1,contribution=contribution))
-  return(list(gg=gg,g=dg,contribution=contribution))
+  return(list(contribution=contribution))
 }
