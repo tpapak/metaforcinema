@@ -1,15 +1,16 @@
 
-getComparisonContribution <- function(c1, row){
+getComparisonContribution <- function(c1, comparison){
 
   library(igraph)
 
   # c1 <- getHatMatrix (indata,type,model,tau, sm)
+  directs <- c1$colNames
+
   hatMatrix <- c1$H2bu
-  comparison <- row
+  
+  rownames(hatMatrix) <- c1$rowNames
 
   split <- function (dir) {strsplit(dir,":")}
-
-  directs <- c1$colNames
 
   dims <- dim(hatMatrix)
 
@@ -69,30 +70,30 @@ getComparisonContribution <- function(c1, row){
   # print(dedgeList)
 #test flow conservation
   dg <- initRowGraph(comparison)
-  plot(dg)
+  # plot(dg)
 
 
   # print(c("comparison:",comparison))
 #test1 outbound contribution from source should add up to 1
-test1 <- Reduce(function(w, e) {w+getFlow(dg,e[])},incident(dg,sv(comparison),"out"),0)
-print(test1)
-test2 <- Reduce(function(w, e) {w+getFlow(dg,e[])},incident(dg,tv(comparison),"in"),0)
-print(test2)
-inflows <- lapply(V(dg),function(vx){
-  Reduce(function(w, e) {
-    fl <- getFlow(dg,e[])
-    return (w + fl)
-  },incident(dg,vx,mode="in"),0)})
-
-outflows <- lapply(V(dg),function(vx){
-  Reduce(function(w, e) {
-    fl <- getFlow(dg,e[])
-    return (w + fl)
-  },incident(dg,vx,mode="out"),0)})
-
-test3 <- unlist(inflows)-unlist(outflows)
-print(test3)
-print(test3==0)
+# test1 <- Reduce(function(w, e) {w+getFlow(dg,e[])},incident(dg,sv(comparison),"out"),0)
+# print(test1)
+# test2 <- Reduce(function(w, e) {w+getFlow(dg,e[])},incident(dg,tv(comparison),"in"),0)
+# print(test2)
+# inflows <- lapply(V(dg),function(vx){
+#   Reduce(function(w, e) {
+#     fl <- getFlow(dg,e[])
+#     return (w + fl)
+#   },incident(dg,vx,mode="in"),0)})
+# 
+# outflows <- lapply(V(dg),function(vx){
+#   Reduce(function(w, e) {
+#     fl <- getFlow(dg,e[])
+#     return (w + fl)
+#   },incident(dg,vx,mode="out"),0)})
+# 
+# test3 <- unlist(inflows)-unlist(outflows)
+# print(test3)
+# print(test3==0)
 
 # test5 <- lapply(V(dg),function(vx){
 #   ins <- incident(dg,vx,"in")
