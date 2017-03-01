@@ -1,5 +1,5 @@
 
-getComparisonContribution <- function(c1 ,type,model="fixed",tau=NA, sm, comparison){
+getComparisonContribution <- function(c1<-indata, comparison=comparison){
 
   library(igraph)
 
