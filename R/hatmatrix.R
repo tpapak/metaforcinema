@@ -21,7 +21,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (type=="netwide_continuous"){
     metaD <- metacont(c(D$n1), c(D$y1), c(D$sd1), c(D$n2), c(D$y2), c(D$sd2),
-                      comb.random=(model=="random"),sm=sm
+                      comb.random=(model=="random"),sm=sm, method.smd="Cohen"
     ) #pairwise meta-analysis
     
     comp<-paste(D$t1,rep("vs",length(D$id)),D$t2)
@@ -39,11 +39,11 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   #network meta-analysis
   metaNetw<- netmeta(metaPairw$TE,metaPairw$seTE,D$t1,D$t2,
-                     sm=sm,comb.fixed=TRUE,comb.random=FALSE, studlab=D$id)
+                     sm=sm,comb.fixed=TRUE,comb.random=FALSE, studlab=D$id, details.tol.multiarm=TRUE, tol.multiarm=1)
   
   #side-splitting
   sideSplit=netsplit(metaNetw)
-
+  
   SideDirect=sideSplit$direct.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
   SideIndirect=sideSplit$indirect.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
   SideIF=sideSplit$compare.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
@@ -831,7 +831,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   }
   
   krahn1<-nma.krahn(metaNetw)
-
+  
   #2bu matrices
   direct=krahn1$direct
   X.obs2.design.2bu=krahn1$X.full[direct$comparison,,drop=FALSE]
@@ -839,64 +839,64 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   H2bu <- krahn1$X.full %*% solve(t(X.obs2.design.2bu) %*% solve(V2bu) %*% X.obs2.design.2bu) %*% t(X.obs2.design.2bu) %*% solve(V2bu)
   
   #pairwise meta-analysis results
-    #heterogeneity and inconsistency results
-
-    heterVarPairwise <- cbind(c(metaPairw$tau.w^2), c(metaPairw$I2.w), 
-                      c(metaPairw$lower.I2.w), c(metaPairw$upper.I2.w))
+  #heterogeneity and inconsistency results
   
-    TreatEffPairw=seTreatEffPairw=rep(0,length(c(metaPairw$tau.w^2)))
+  heterVarPairwise <- cbind(c(metaPairw$tau.w^2), c(metaPairw$I2.w), 
+                            c(metaPairw$lower.I2.w), c(metaPairw$upper.I2.w))
   
-    if (model=="random"){
-      TreatEffPairw=metaPairw$TE.random.w
-      seTreatEffPairw=metaPairw$seTE.random.w
-    }
-    if (model=="fixed"){
-      TreatEffPairw=metaPairw$fixed.w
-      seTreatEffPairw=metaPairw$seTE.fixed.w
-    }
+  TreatEffPairw=seTreatEffPairw=rep(0,length(c(metaPairw$tau.w^2)))
   
-    #CI and PrI
-    z=qnorm(1-0.05/2,0,1)
-    tq=qt(1-0.05/2,metaPairw$k.w-2)
-
-    CITreatEffPairw=cbind(TreatEffPairw-z*seTreatEffPairw,TreatEffPairw+z*seTreatEffPairw)
-    PrITreatEffPairw=cbind(TreatEffPairw-tq*sqrt(metaPairw$tau.w^2+seTreatEffPairw^2),
+  if (model=="random"){
+    TreatEffPairw=metaPairw$TE.random.w
+    seTreatEffPairw=metaPairw$seTE.random.w
+  }
+  if (model=="fixed"){
+    TreatEffPairw=metaPairw$TE.fixed.w
+    seTreatEffPairw=metaPairw$seTE.fixed.w
+  }
+  
+  #CI and PrI
+  z=qnorm(1-0.05/2,0,1)
+  tq=qt(1-0.05/2,metaPairw$k.w-2)
+  
+  CITreatEffPairw=cbind(TreatEffPairw-z*seTreatEffPairw,TreatEffPairw+z*seTreatEffPairw)
+  PrITreatEffPairw=cbind(TreatEffPairw-tq*sqrt(metaPairw$tau.w^2+seTreatEffPairw^2),
                          TreatEffPairw+tq*sqrt(metaPairw$tau.w^2+seTreatEffPairw^2))
-    
-    Pairwise=cbind(TreatEffPairw,seTreatEffPairw,CITreatEffPairw,PrITreatEffPairw,heterVarPairwise)
   
-    rownames(Pairwise) <- metaPairw$bylevs
-    colnames(Pairwise) <- c("Pairw treatment effect", "se treat effect", "lower CI", "upper CI", 
-                        "lower PrI", "upper PrI", "tau2", "I2", "I2 lower", "I2 upper")
+  Pairwise=cbind(TreatEffPairw,seTreatEffPairw,CITreatEffPairw,PrITreatEffPairw,heterVarPairwise)
+  
+  rownames(Pairwise) <- metaPairw$bylevs
+  colnames(Pairwise) <- c("Pairw treatment effect", "se treat effect", "lower CI", "upper CI", 
+                          "lower PrI", "upper PrI", "tau2", "I2", "I2 lower", "I2 upper")
   
   #NMA results
   
-    heterVarNtw=metaNetw$tau^2
-    Qmeasures=matrix(c(metaNetw$Q,metaNetw$Q.heterogeneity,metaNetw$Q.inconsistency),nrow=1,ncol=3)
-    colnames(Qmeasures) <- c("Q overall", "Q heterogeneity", "Q inconsistency")
+  heterVarNtw=metaNetw$tau^2
+  Qmeasures=matrix(c(metaNetw$Q,metaNetw$Q.heterogeneity,metaNetw$Q.inconsistency),nrow=1,ncol=3)
+  colnames(Qmeasures) <- c("Q overall", "Q heterogeneity", "Q inconsistency")
   
-    NMAheterResults=cbind(heterVarNtw,Qmeasures)
-    
-    #NMA treatment effects
-    z=qnorm(1-0.05/2,0,1)
-    
-    tnma=qt(1-0.05/2, metaNetw$k - nrow(Pairwise) - 1)
-    
-    TreatEffNtw <- cbind(krahn1$network[,"TE"],krahn1$network[,"seTE"], krahn1$network[,"TE"]-z*krahn1$network[,"seTE"],
+  NMAheterResults=cbind(heterVarNtw,Qmeasures)
+  
+  #NMA treatment effects
+  z=qnorm(1-0.05/2,0,1)
+  
+  tnma=qt(1-0.05/2, metaNetw$k - nrow(Pairwise) - 1)
+  
+  TreatEffNtw <- cbind(krahn1$network[,"TE"],krahn1$network[,"seTE"], krahn1$network[,"TE"]-z*krahn1$network[,"seTE"],
                        krahn1$network[,"TE"]+z*krahn1$network[,"seTE"])
-
-    PrITreatEffNetw=cbind(krahn1$network[,"TE"]-tnma*sqrt(heterVarNtw+krahn1$network[,"seTE"]^2),
-                          krahn1$network[,"TE"]+tnma*sqrt(heterVarNtw+krahn1$network[,"seTE"]^2))
-    
-    NMA=cbind(TreatEffNtw,PrITreatEffNetw)
-    
-    colnames(NMA) <- c("NMA treatment effect", "se treat effect", "lower CI", "upper CI", 
-                            "lower PrI", "upper PrI")
   
-    rownames(NMA) <- rownames(krahn1$network)
-    
-    rowNames=rownames(NMA)
-    
+  PrITreatEffNetw=cbind(krahn1$network[,"TE"]-tnma*sqrt(heterVarNtw+krahn1$network[,"seTE"]^2),
+                        krahn1$network[,"TE"]+tnma*sqrt(heterVarNtw+krahn1$network[,"seTE"]^2))
+  
+  NMA=cbind(TreatEffNtw,PrITreatEffNetw)
+  
+  colnames(NMA) <- c("NMA treatment effect", "se treat effect", "lower CI", "upper CI", 
+                     "lower PrI", "upper PrI")
+  
+  rownames(NMA) <- rownames(krahn1$network)
+  
+  rowNames=rownames(NMA)
+  
   return(list(colNames=direct$comparison,rowNames=rowNames,
               Pairwise=Pairwise,
               NMA=NMA,
@@ -904,7 +904,3 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
               H2bu=H2bu,
               side=side))
 }
-
-
-
-
