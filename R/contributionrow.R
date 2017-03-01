@@ -3,7 +3,7 @@ getComparisonContribution <- function(c1, comparison){
 
   library(igraph)
   hatMatrix <- c1$H2bu
-  return (hatMatrix[comparison,])
+  return (hatMatrix)
 #   return(list(contribution=contribution,
 # 
 #   # c1 <- getHatMatrix (indata,type,model,tau, sm)
