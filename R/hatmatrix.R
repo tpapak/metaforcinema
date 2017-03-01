@@ -4,7 +4,6 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   library(meta)
   library(plyr)
   
-  # D <- fromJSON(indata)
   D <- indata
   
   #pairwise meta-analysis
