@@ -1,9 +1,9 @@
 
-getComparisonContribution <- function(indata,type,model="fixed",tau=NA, sm, comparison){
+getComparisonContribution <- function(c1 ,type,model="fixed",tau=NA, sm, comparison){
 
   library(igraph)
 
-  c1 <- getHatMatrix (indata,type,model,tau, sm)
+  # c1 <- getHatMatrix (indata,type,model,tau, sm)
   hatMatrix <- c1$H2bu
 
   split <- function (dir) {strsplit(dir,":")}
