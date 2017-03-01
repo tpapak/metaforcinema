@@ -69,7 +69,7 @@ getComparisonContribution <- function(c1, comparison){
   }
   # print(dedgeList)
 #test flow conservation
-  dg <- initRowGraph(comparison)
+  # dg <- initRowGraph(comparison)
   # plot(dg)
 
 
@@ -153,9 +153,10 @@ getComparisonContribution <- function(c1, comparison){
     return(g)
   }
 
-  ptm <- proc.time()
-  gg <- reduceGraph (initRowGraph(comparison), comparison)
-  executionTime <- proc.time() - ptm
+  # ptm <- proc.time()
+  # gg <- reduceGraph (initRowGraph(comparison), comparison)
+  reduceGraph (initRowGraph(comparison), comparison)
+  # executionTime <- proc.time() - ptm
   # print(c("execution time",executionTime))
 
   names(contribution) <- directs
