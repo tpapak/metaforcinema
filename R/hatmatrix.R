@@ -40,6 +40,9 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   #network meta-analysis
   metaNetw<- netmeta(metaPairw$TE,metaPairw$seTE,D$t1,D$t2,
                      sm=sm,comb.fixed=TRUE,comb.random=FALSE, studlab=D$id, details.tol.multiarm=TRUE, tol.multiarm=1)
+#dbt mages mou
+  dbt=cbind(decomp.design(metaNetw)$Q.inc.random[,1],decomp.design(metaNetw)$Q.inc.random[,3])
+  colnames(dbt)=c("Q_dbt","pv_dbt")
   
   #side-splitting
   sideSplit=netsplit(metaNetw)
@@ -898,9 +901,14 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   rowNames=rownames(NMA)
   
   return(list(colNames=direct$comparison,rowNames=rowNames,
+	      rowNamesPairwise=rownames(Pairwise),
+	      colNamesPairwise=colnames(Pairwise),
               Pairwise=Pairwise,
               NMA=NMA,
+	      rowNamesNMA=rownames(NMA),
+	      colNamesNMA=colnames(NMA),
               NMAheterResults=NMAheterResults,
               H2bu=H2bu,
-              side=side))
+              side=side,
+              dbt=dbt))
 }
