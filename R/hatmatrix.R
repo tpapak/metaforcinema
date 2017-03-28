@@ -910,5 +910,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
               NMAheterResults=NMAheterResults,
               H2bu=H2bu,
               side=side,
+              rowNamesSide = rownames(side),
+              colNamesSide = colnames(side),
               dbt=dbt))
 }
