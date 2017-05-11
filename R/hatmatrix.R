@@ -47,13 +47,25 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   #side-splitting
   sideSplit=netsplit(metaNetw)
   
-  SideDirect=sideSplit$direct.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
-  SideIndirect=sideSplit$indirect.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
-  SideIF=sideSplit$compare.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
-  SideIFlower=sideSplit$compare.fixed$lower[!is.na(sideSplit$direct.fixed$TE)]
-  SideIFupper=sideSplit$compare.fixed$upper[!is.na(sideSplit$direct.fixed$TE)]
-  SideZ=sideSplit$compare.fixed$z[!is.na(sideSplit$direct.fixed$TE)]
-  SidePvalue=sideSplit$compare.fixed$p[!is.na(sideSplit$direct.fixed$TE)]
+  if (model=="fixed"){
+    SideDirect=sideSplit$direct.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
+    SideIndirect=sideSplit$indirect.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
+    SideIF=sideSplit$compare.fixed$TE[!is.na(sideSplit$direct.fixed$TE)]
+    SideIFlower=sideSplit$compare.fixed$lower[!is.na(sideSplit$direct.fixed$TE)]
+    SideIFupper=sideSplit$compare.fixed$upper[!is.na(sideSplit$direct.fixed$TE)]
+    SideZ=sideSplit$compare.fixed$z[!is.na(sideSplit$direct.fixed$TE)]
+    SidePvalue=sideSplit$compare.fixed$p[!is.na(sideSplit$direct.fixed$TE)]
+  }
+  
+  if (model=="random"){
+    SideDirect=sideSplit$direct.random$TE[!is.na(sideSplit$direct.random$TE)]
+    SideIndirect=sideSplit$indirect.random$TE[!is.na(sideSplit$direct.random$TE)]
+    SideIF=sideSplit$compare.random$TE[!is.na(sideSplit$direct.random$TE)]
+    SideIFlower=sideSplit$compare.random$lower[!is.na(sideSplit$direct.random$TE)]
+    SideIFupper=sideSplit$compare.random$upper[!is.na(sideSplit$direct.random$TE)]
+    SideZ=sideSplit$compare.random$z[!is.na(sideSplit$direct.random$TE)]
+    SidePvalue=sideSplit$compare.random$p[!is.na(sideSplit$direct.random$TE)]
+  }
   
   side=cbind(c(SideDirect),c(SideIndirect),c(SideIF),c(SideIFlower),c(SideIFupper),c(SideZ),c(SidePvalue))
   

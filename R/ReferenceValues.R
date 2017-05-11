@@ -11,6 +11,8 @@
 
 ReferenceValues <- function(measurement,OutcomeType,InterventionComparisonType){
   
+  library(MASS)
+  
   LogMean=NULL
   LogSD=NULL
   LogTmean=NULL
@@ -204,12 +206,12 @@ ReferenceValues <- function(measurement,OutcomeType,InterventionComparisonType){
       
     }
     
-    ncp=((LogTmean)*sqrt(6))/LogTsd
+    qt_ls <- function(prob, df, mu, a) qt(prob, df)*a + mu
     
     quantiles=cbind(
-      (exp(qt(0.25,5,ncp=ncp))),
-      (exp(qt(0.5,5,ncp=ncp))),
-      (exp(qt(0.75,5,ncp=ncp)))
+      (exp(qt_ls(0.25,5,LogTmean,LogTsd))),
+      (exp(qt_ls(0.5,5,LogTmean,LogTsd))),
+      (exp(qt_ls(0.75,5,LogTmean,LogTsd)))
     )
     
   }
