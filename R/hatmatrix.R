@@ -881,14 +881,24 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   Pairwise=cbind(TreatEffPairw,seTreatEffPairw,CITreatEffPairw,PrITreatEffPairw,heterVarPairwise)
   
   rownames(Pairwise) <- metaPairw$bylevs
-  colnames(Pairwise) <- c("Pairw treatment effect", "se treat effect", "lower CI", "upper CI", 
-                          "lower PrI", "upper PrI", "tau2", "I2", "I2 lower", "I2 upper")
+  colnames(Pairwise) <- c( "Pairw treatment effect"
+                         , "se treat effect"
+                         , "lower CI"
+                         , "upper CI"
+                         , "lower PrI"
+                         , "upper PrI"
+                         , "tau2"
+                         , "I2"
+                         , "I2 lower"
+                         , "I2 upper")
   
   #NMA results
   
   heterVarNtw=metaNetw$tau^2
   Qmeasures=matrix(c(metaNetw$Q,metaNetw$Q.heterogeneity,metaNetw$Q.inconsistency),nrow=1,ncol=3)
-  colnames(Qmeasures) <- c("Q overall", "Q heterogeneity", "Q inconsistency")
+  colnames(Qmeasures) <- c( "Q overall"
+                          , "Q heterogeneity"
+                          , "Q inconsistency")
   
   NMAheterResults=cbind(heterVarNtw,Qmeasures)
   
@@ -905,8 +915,12 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   NMA=cbind(TreatEffNtw,PrITreatEffNetw)
   
-  colnames(NMA) <- c("NMA treatment effect", "se treat effect", "lower CI", "upper CI", 
-                     "lower PrI", "upper PrI")
+  colnames(NMA) <- c( "NMA treatment effect" 
+                    , "se treat effect"
+                    , "lower CI"
+                    , "upper CI"
+                    , "lower PrI"
+                    , "upper PrI")
   
   rownames(NMA) <- rownames(krahn1$network)
   
