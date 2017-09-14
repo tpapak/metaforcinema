@@ -55,6 +55,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
     SideIFupper=sideSplit$compare.fixed$upper[!is.na(sideSplit$direct.fixed$TE)]
     SideZ=sideSplit$compare.fixed$z[!is.na(sideSplit$direct.fixed$TE)]
     SidePvalue=sideSplit$compare.fixed$p[!is.na(sideSplit$direct.fixed$TE)]
+    PropDir=sideSplit$prop.fixed[!is.na(sideSplit$direct.fixed$TE)]
   }
   
   if (model=="random"){
@@ -65,12 +66,13 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
     SideIFupper=sideSplit$compare.random$upper[!is.na(sideSplit$direct.random$TE)]
     SideZ=sideSplit$compare.random$z[!is.na(sideSplit$direct.random$TE)]
     SidePvalue=sideSplit$compare.random$p[!is.na(sideSplit$direct.random$TE)]
+    PropDir=sideSplit$prop.random[!is.na(sideSplit$direct.random$TE)]
   }
   
-  side=cbind(c(SideDirect),c(SideIndirect),c(SideIF),c(SideIFlower),c(SideIFupper),c(SideZ),c(SidePvalue))
+  side=cbind(c(SideDirect),c(SideIndirect),c(SideIF),c(SideIFlower),c(SideIFupper),c(SideZ),c(SidePvalue),c(PropDir))
   
   rownames(side) <- c(sideSplit$comparison[!is.na(sideSplit$direct.fixed$TE)])
-  colnames(side) <- c("SideDirect","SideIndirect","SideIF","SideIFlower","SideIFupper","SideZ","SidePvalue")
+  colnames(side) <- c("SideDirect","SideIndirect","SideIF","SideIFlower","SideIFupper","SideZ","SidePvalue","PropDir")
   
   #Krahn's routine
   if(model=="fixed"){
