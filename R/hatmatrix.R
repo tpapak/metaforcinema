@@ -907,7 +907,10 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   #NMA treatment effects
   z=qnorm(1-0.05/2,0,1)
   
-  tnma=qt(1-0.05/2, metaNetw$k - nrow(Pairwise) - 1)
+  dfpr=metaNetw$k - nrow(Pairwise) - 1
+  if (dfpr<1){dfpr=1}
+  
+  tnma=qt(1-0.05/2, dfpr)
   
   TreatEffNtw <- cbind(krahn1$network[,"TE"],krahn1$network[,"seTE"], krahn1$network[,"TE"]-z*krahn1$network[,"seTE"],
                        krahn1$network[,"TE"]+z*krahn1$network[,"seTE"])
