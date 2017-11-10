@@ -6,7 +6,7 @@ getComparisonContribution <- function(c1, comparison){
   # c1 <- getHatMatrix (indata,type,model,tau, sm)
   directs <- c1$colNames
 
-  hatMatrix <- c1$H2bu
+  hatMatrix <- c1$H
   
   rownames(hatMatrix) <- c1$rowNames
 
