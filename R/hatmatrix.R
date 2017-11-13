@@ -32,7 +32,11 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (model=="fixed"){
     Direct=sideSplit$direct.fixed$TE
+    DirectL=sideSplit$direct.fixed$lower
+    DirectU=sideSplit$direct.fixed$upper
     Indirect=sideSplit$indirect.fixed$TE
+    IndirectL=sideSplit$indirect.fixed$lower
+    IndirectU=sideSplit$indirect.fixed$upper
     SideIF=sideSplit$compare.fixed$TE
     SideIFlower=sideSplit$compare.fixed$lower
     SideIFupper=sideSplit$compare.fixed$upper
@@ -43,7 +47,11 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (model=="random"){
     Direct=sideSplit$direct.random$TE
+    DirectL=sideSplit$direct.random$lower
+    DirectU=sideSplit$direct.random$upper
     Indirect=sideSplit$indirect.random$TE
+    IndirectL=sideSplit$indirect.random$lower
+    IndirectU=sideSplit$indirect.random$upper
     SideIF=sideSplit$compare.random$TE
     SideIFlower=sideSplit$compare.random$lower
     SideIFupper=sideSplit$compare.random$upper
@@ -52,10 +60,13 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
     PropDir=sideSplit$prop.random
   }
   
-  side=cbind(c(Direct),c(Indirect),c(SideIF),c(SideIFlower),c(SideIFupper),c(SideZ),c(SidePvalue),c(PropDir))
+  side=cbind(c(Direct),c(DirectL),c(DirectU),c(Indirect),c(IndirectL),c(IndirectU),
+             c(SideIF),c(SideIFlower),c(SideIFupper),c(SideZ),c(SidePvalue),c(PropDir))
   
   rownames(side) <- c(sideSplit$comparison)
-  colnames(side) <- c("Direct","Indirect","SideIF","SideIFlower","SideIFupper","SideZ","SidePvalue","PropDir")
+  colnames(side) <- c("Direct","DirectL","DirectU",
+                      "Indirect","IndirectL","IndirectU",
+                      "SideIF","SideIFlower","SideIFupper","SideZ","SidePvalue","PropDir")
   
   #H matrix
   
