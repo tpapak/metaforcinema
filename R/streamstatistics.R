@@ -1,14 +1,25 @@
+#### Example:
+## read data
+#wideData = read.csv2("griselda_wide.csv",header=TRUE,sep=",")
+## convert to long because getHatMatrix only accepts long
+#indata = wide2long(wideData,"binary")
+#C = getHatMatrix(indata,type="long_binary",model="random",sm="OR")
+## get stream statistics
+#cl = streamStatistics(C)
+#plot(cl$contributionperlength)
+#plot(cl$cummulativeContributionPerStream)
+#streamHistogram(cl$lengthfrequency)
 
-getComparisonContribution <- function(c1, comparison){
+comparisonStreams = function(hatmatrix, comparison){
 
+  library(rlist)
   library(igraph)
 
-  # c1 <- getHatMatrix (indata,type,model,tau, sm)
-  directs <- c1$colNames
+  directs <- hatmatrix$colNames
 
-  hatMatrix <- c1$H
+  hatMatrix <- hatmatrix$H
   
-  rownames(hatMatrix) <- c1$rowNames
+  rownames(hatMatrix) <- hatmatrix$rowNames
 
   split <- function (dir) {strsplit(dir,":")}
 
@@ -104,6 +115,7 @@ getComparisonContribution <- function(c1, comparison){
 
 
   contribution = rep(0,dims[2])
+  streams = list()
   names(contribution) <- c(1:dims[2])
 
   reducePath <- function (g,comparison,spl) {
@@ -114,6 +126,7 @@ getComparisonContribution <- function(c1, comparison){
     flow <- min(unlist(lapply(splE, function(e){
       return(e$flow[])
     })))
+    streams <<- list.append(streams,data.frame(stream=floor(length(splE)),flow=flow))
     # print(c("to shortest path einai :",spl))
     gg <- Reduce(function(g, e){
       elabel <- e$label
@@ -166,7 +179,71 @@ getComparisonContribution <- function(c1, comparison){
   names(contribution) <- directs
   contribution <- 100 * contribution
 
-  # return(list(gg=gg,g=dg,hatMatrix=c1,contribution=contribution))
-  return(list(contribution=contribution,
-              names=directs))
+  # return(list(gg=gg,g=dg,hatMatrix=hatmatrix,contribution=contribution))
+  return(list(
+              #contribution=contribution
+              streams=streams
+             #, names=directs
+             ))
 }
+
+streamStatistics = function (hatmatrix){
+  library(dplyr)
+
+  rownames = hatmatrix$rowNames
+
+  out = mapply(function(comp){comparisonStreams(hatmatrix,comp)},rownames)
+
+  getStream = function(comp){
+    lapply(comp, function(str){
+             return(str$stream)
+    })
+  }
+
+  getStreamFlow = function(comp){
+    lapply(comp, function(str){
+             return(str)
+    })
+  }
+
+  histstr = unlist(lapply(out, getStream))
+
+  stfl = unlist(lapply(out, function(s){getStreamFlow(s)}), recursive=F)
+
+  groupByStream = function (lst){
+    Reduce(function(acc,str){
+             i = str[[1]]
+             f = str[[2]]
+             newacc = acc
+             if (is.na(acc[i])) {
+               newacc[i]=f
+             }else{
+               newacc[i]=acc[i]+f
+             }
+             return (newacc)
+    }, lst, array(), right = FALSE, accumulate = F)
+  }
+
+                           
+  flowperlength = groupByStream(stfl)
+  totalFlow = sum(flowperlength)
+
+  contributionperlength = mapply(function(cont){
+                                   if(is.na(cont)){
+                                           return(0)
+                                        }else{
+                                           return(cont/totalFlow)
+                                        }
+                                },flowperlength)
+
+  return(list( contributionperlength=contributionperlength
+             , cummulativeContributionPerStream=cumsum(contributionperlength)
+             , lengthfrequency=histstr
+             ))
+}
+
+streamHistogram = function(lengthfrequency){
+  dataset = lengthfrequency
+  hist(dataset, breaks=seq(min(dataset)-0.5, max(dataset)+0.5, by=1)  )
+}
+
