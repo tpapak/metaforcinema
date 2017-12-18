@@ -3,13 +3,14 @@ Type: Package
 Title: contribution from flow
 Version: 0.1.0
 Author: Thodoris Papakonstantinou
-Maintainer: tpapak@gmail.com
-Description: Computes contributions of direct evidence in Netwokr meta-analysis
+Maintainer: Thodoris Papakonstantinou <theodoros.papakonstantinou@ispm.unibe.ch>
+Description: Computes contributions of direct evidence in Network meta-analysis
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-  , igraph
+    igraph
+  , netmeta (>= 0.9-6)
 Suggests:
     dataformatter
     , rlist

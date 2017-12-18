@@ -2,14 +2,9 @@ Sys.setenv(LANG = "en")
 rm(list=ls())
 
 library("devtools")
-install_version("netmeta",version="0.9-6")
-install_github("esm-ispm-unibe-ch/dataformatter")
 install_github("esm-ispm-unibe-ch/flow_contribution")
 install_github("esm-ispm-unibe-ch/nmadata")
-install.packages("rlist")
-install.packages("dplyr")
 
-library(dataformatter)
 library(contribution)
 library(nmadata)
 
