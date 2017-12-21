@@ -12,8 +12,7 @@ Imports:
     igraph
   , netmeta (>= 0.9-6)
 Suggests:
-    dataformatter
-    , rlist
+      rlist
     , dplyr
     , nmadata
 
