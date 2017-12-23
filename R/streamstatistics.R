@@ -10,6 +10,42 @@
 #plot(cl$cummulativeContributionPerStream)
 #streamHistogram(cl$lengthfrequency)
 
+getdof = function(hatmatrix){
+  library(rlist)
+  library(igraph)
+
+  directs <- hatmatrix$colNames
+
+  hatMatrix <- hatmatrix$H
+  
+  rownames(hatMatrix) <- hatmatrix$rowNames
+
+  split <- function (dir) {strsplit(dir,":")}
+
+  dims <- dim(hatMatrix)
+
+#rows of comparison matrix 
+  comparisons <- unlist(lapply(rownames(hatMatrix),unlist))
+
+  comparisonToEdge <- function (comp) unlist (split(comp))
+
+  directlist <- unlist(lapply(lapply(directs,split),unlist))
+  # print(c("dir",directs))
+
+  edgeList <- matrix( directlist, nc = 2, byrow = TRUE)
+  # print(c("Edgelist"))
+  # print(edgeList)
+
+  g <- graph_from_edgelist(edgeList , directed=FALSE)
+  g <- set.vertex.attribute(g,'label',value = V(g))
+  g <- set.edge.attribute(g,'label',value = E(g))
+   #print(V(g)$label)
+   #print(E(g)$label)
+
+   dof = length(E(g))-length(V(g))+1
+  return (dof)
+}
+
 comparisonStreams = function(hatmatrix, comparison){
 
   library(rlist)
@@ -40,8 +76,148 @@ comparisonStreams = function(hatmatrix, comparison){
   g <- graph_from_edgelist(edgeList , directed=FALSE)
   g <- set.vertex.attribute(g,'label',value = V(g))
   g <- set.edge.attribute(g,'label',value = E(g))
-  # print(V(g)$label)
-  # print(E(g)$label)
+   #print(V(g)$label)
+   #print(V(g)$name)
+   #print(E(g))
+
+  setWeights <- function (g,comparison,conMat) {
+    set.edge.attribute(g,"weight",value=rep(0,dims[2]))
+  }
+
+
+  getFlow <- function(g,edge) {return(E(g)[edge]$flow)}
+
+  sv <- function (comparison) {split(comparison)[[1]][1][1]}
+
+  tv <- function (comparison) {split(comparison)[[1]][2][1]}
+
+  initRowGraph <- function(comparison) {
+    dedgeList <- lapply(1:length(directs),function(comp) {
+       if(hatMatrix[comparison,comp]>0){
+         # print(c("not switched",directs[comp],hatMatrix[comparison,comp]))
+         return (c(sv(directs[comp]),tv(directs[comp])))
+       }else{
+         # print(c("switched",directs[comp],hatMatrix[comparison,comp]))
+         return (c(tv(directs[comp]),sv(directs[comp])))
+       }
+    })
+    dedgeList <- matrix( unlist(dedgeList), nc = 2, byrow = TRUE)
+    # gg <- setFlow(g,comparison)
+    # E(gg)$weight <- rep(0,dims[2])
+    # return(gg)
+    flows<-abs(hatMatrix[comparison,])
+    dg <- graph_from_edgelist(dedgeList , directed = TRUE)
+    E(dg)[]$weight <- rep(0,dims[2])
+    E(dg)[]$flow <- abs(hatMatrix[comparison,])
+    V(dg)[]$label <- V(dg)[]$name
+    # E(dg)[]$label <- E(dg)[]$flow
+    dg <- set.edge.attribute(dg,'label',value = E(dg))
+    # print(c("isdirected",is.directed(dg)))
+    return(dg)
+  }
+
+  contribution = rep(0,dims[2])
+  streams = list()
+  names(contribution) <- c(1:dims[2])
+
+  reducePath <- function (g,comparison,spl) {
+    pl <- length(spl[[1]])
+    splE <- lapply(spl[[1]], function(e){
+       return (E(g)[e[]])
+    })
+    flow <- min(unlist(lapply(splE, function(e){
+      return(e$flow[])
+    })))
+    streams <<- list.append(streams,data.frame(comp=comparison,length=floor(length(splE)),stream=toString(unlist(spl[[1]])),flow=flow))
+    # print(c("to shortest path einai :",spl))
+    gg <- Reduce(function(g, e){
+      elabel <- e$label
+      # print(c("pame plevra:",e,"dld",e$label))
+      pfl <- e$flow[]
+      g <- set.edge.attribute(g,"flow",e, pfl-flow)
+      # print(c("h e",e,"einai pragmatika h ",elabel))
+      cw <-  e$weight[] + (flow[1]/pl) 
+      # print(c("flow",flow,"eweight",e$weight[]))
+      contribution[elabel] <<- cw
+      return(set.edge.attribute(g,"weight",e, cw))
+    },splE, g)
+    # print(c("graph before deleting edges", E(gg)$label))
+    emptyEdges <- Reduce(function(removedEdges, e){
+      e <- E(gg)[e[]]
+      if(e$flow[[1]][[1]]==0){
+        removedEdges <- c(removedEdges, e)
+      }
+      return(removedEdges)
+    },splE, c())
+    # print(c("edges to be removed",emptyEdges))
+   return(delete_edges(gg, emptyEdges))
+    # print(c("graph after deleting edges", E(gg)$label))
+  }
+
+ reduceGraph <- function (g,comparison) {
+    getshortest <- function (g,compariston) {
+      floweights = lapply(edge_attr(g,"flow",E(g)), function(f){return(abs(2-f))})
+      spths = suppressWarnings(
+                get.shortest.paths(g,sv(comparison),tv(comparison),mode="out",output="epath",weights=floweights)
+                              )
+      return(spths$epath)
+    }
+    # while(edge_connectivity(g,sv(comparison),tv(comparison))>0){
+    spath <- getshortest(g,comparison)
+    while(length(unlist(spath))>0){
+      g <- reducePath(g,comparison,spath)
+      spath <- getshortest(g,comparison)
+    }
+    # print("teleiwse")
+    return(g)
+  }
+
+  # ptm <- proc.time()
+  # gg <- reduceGraph (initRowGraph(comparison), comparison)
+  reduceGraph (initRowGraph(comparison), comparison)
+  # executionTime <- proc.time() - ptm
+  # print(c("execution time",executionTime))
+
+  names(contribution) <- directs
+  contribution <- 100 * contribution
+  
+  return(list( streams=streams
+  #return(data.frame( streams=streams
+       ))
+}
+
+comparisonStreamlengths = function(hatmatrix, comparison){
+
+  library(rlist)
+  library(igraph)
+
+  directs <- hatmatrix$colNames
+
+  hatMatrix <- hatmatrix$H
+  
+  rownames(hatMatrix) <- hatmatrix$rowNames
+
+  split <- function (dir) {strsplit(dir,":")}
+
+  dims <- dim(hatMatrix)
+
+#rows of comparison matrix 
+  comparisons <- unlist(lapply(rownames(hatMatrix),unlist))
+
+  comparisonToEdge <- function (comp) unlist (split(comp))
+
+  directlist <- unlist(lapply(lapply(directs,split),unlist))
+  # print(c("dir",directs))
+
+  edgeList <- matrix( directlist, nc = 2, byrow = TRUE)
+  # print(c("Edgelist"))
+  # print(edgeList)
+
+  g <- graph_from_edgelist(edgeList , directed=FALSE)
+  g <- set.vertex.attribute(g,'label',value = V(g))
+  g <- set.edge.attribute(g,'label',value = E(g))
+   #print(V(g)$label)
+   #print(E(g)$label)
 
   setWeights <- function (g,comparison,conMat) {
     set.edge.attribute(g,"weight",value=rep(0,dims[2]))
@@ -178,13 +354,10 @@ comparisonStreams = function(hatmatrix, comparison){
 
   names(contribution) <- directs
   contribution <- 100 * contribution
-
-  # return(list(gg=gg,g=dg,hatMatrix=hatmatrix,contribution=contribution))
-  return(list(
-              #contribution=contribution
-              streams=streams
-             #, names=directs
-             ))
+  
+  return(list( streams=streams
+  #return(data.frame( streams=streams
+       ))
 }
 
 streamStatistics = function (hatmatrix){
@@ -192,7 +365,16 @@ streamStatistics = function (hatmatrix){
 
   rownames = hatmatrix$rowNames
 
-  out = mapply(function(comp){comparisonStreams(hatmatrix,comp)},rownames)
+  out = mapply(function(comp){
+                res = comparisonStreamlengths(hatmatrix,comp)
+                return(res)
+              },rownames)
+  #print(out)
+  dof = getdof(hatmatrix)
+
+  getStreamNumber = function(comp){
+             return(length(comp))
+  }
 
   getStream = function(comp){
     lapply(comp, function(str){
@@ -207,6 +389,8 @@ streamStatistics = function (hatmatrix){
   }
 
   histstr = unlist(lapply(out, getStream))
+
+  numOfStreams = unlist(lapply(out, getStreamNumber))
 
   stfl = unlist(lapply(out, function(s){getStreamFlow(s)}), recursive=F)
 
@@ -235,10 +419,18 @@ streamStatistics = function (hatmatrix){
                                            return(cont/totalFlow)
                                         }
                                 },flowperlength)
+  streamContribution = lapply(rownames, function(row){
+                                print(row)
+                                res = comparisonStreams(hatmatrix,row)
+                                return(res)
+                             })
 
-  return(list( contributionperlength=contributionperlength
-             , cummulativeContributionPerStream=cumsum(contributionperlength)
-             , lengthfrequency=histstr
+  return(list( contributionperlength = contributionperlength
+             , cummulativeContributionPerStream = cumsum(contributionperlength)
+             , streamContribution = streamContribution
+             , lengthfrequency = histstr
+             , dof = dof
+             , numOfStreams = numOfStreams
              ))
 }
 
@@ -246,4 +438,3 @@ streamHistogram = function(lengthfrequency){
   dataset = lengthfrequency
   hist(dataset, breaks=seq(min(dataset)-0.5, max(dataset)+0.5, by=1)  )
 }
-
