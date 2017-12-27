@@ -1,10 +1,17 @@
 rm(list=ls())
 Sys.setenv(LANG = "en")
-library("devtools")
+library(parallel)
+library(devtools)
 
-source("../flow_contribution/R/hatmatrix.R")
-source("../flow_contribution/R/contributionmatrix.R")
-source("../flow_contribution/R/contributionrow-new.R")
+install_github("esm-ispm-unibe-ch/flow_contribution")
+install_github("esm-ispm-unibe-ch/nmadata")
+
+require(nmadata)
+require(contribution)
+
+#source("../flow_contribution/R/hatmatrix.R")
+#source("../flow_contribution/R/contributionmatrix.R")
+#source("../flow_contribution/R/contributionrow-new.R")
 
 # indata = read.csv("griselda_wide.csv",header=TRUE,sep=",")
 # C = getContributionMatrix(indata,type="netwide_binary",model="random",sm="OR")
