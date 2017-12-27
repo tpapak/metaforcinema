@@ -1,6 +1,6 @@
 getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
-  library(netmeta)
+  require(netmeta)
   library(meta)
   library(plyr)
   
@@ -180,6 +180,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
               NMAheterResults=NMAheterResults,
               H=H,
               dbt=dbt,
-              colNamesdbt = colnames(dbt)
+              colNamesdbt = colnames(dbt),
+              netmetaObject = metaNetw
               ))
 }
