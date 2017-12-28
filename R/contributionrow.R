@@ -141,11 +141,12 @@ getComparisonContribution <- function(c1, comparison){
 
  reduceGraph <- function (g,comparison) {
     getshortest <- function (g,compariston) {
-      floweights = lapply(edge_attr(g,"flow",E(g)), function(f){return(abs(2-f))})
-      spths = suppressWarnings(
-                get.shortest.paths(g,sv(comparison),tv(comparison),mode="out",output="epath",weights=floweights)
-                              )
-      return(spths$epath)
+      #floweights = lapply(edge_attr(g,"flow",E(g)), function(f){return(abs(2-f))})
+      #spths = suppressWarnings(
+                #get.shortest.paths(g,sv(comparison),tv(comparison),mode="out",output="epath",weights=floweights)
+                              #)
+      #return(spths$epath)
+      return(get.shortest.paths(g,sv(comparison),tv(comparison),mode="out",output="epath",weights=NA)$epath)
     }
     # while(edge_connectivity(g,sv(comparison),tv(comparison))>0){
     spath <- getshortest(g,comparison)
