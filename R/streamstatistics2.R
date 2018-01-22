@@ -135,5 +135,7 @@ comparisonStreams = function(hatmatrix, comparison){
   contribution <- 100 * contribution
   
   return(list( streams=streams
+              ,contribution=contribution
+               
   ))
 }

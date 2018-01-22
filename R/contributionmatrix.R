@@ -21,8 +21,7 @@ getContributionMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   library(igraph)
 
   c1 <- getHatMatrix (indata,type,model,tau, sm)
-  hatMatrix <- c1$H2bu
-  # print(hatMatrix)
+  hatMatrix <- c1$H
 
   split <- function (dir) {strsplit(dir,":")}
 
