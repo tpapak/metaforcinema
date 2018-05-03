@@ -5,8 +5,8 @@ library(parallel)
 library(devtools)
 library(jsonlite)
 #install_github("esm-ispm-unibe-ch/flow_contribution",repos="simulations")
-#install_github("esm-ispm-unibe-ch/nmadata")
-install.packages("../../nmadata_1.0.tar.gz",repos=NULL)
+install_github("esm-ispm-unibe-ch/nmadata")
+#install.packages("../../nmadata_1.0.tar.gz",repos=NULL)
 #install.packages("../../../contribution_0.1.0.tar.gz",repos=NULL)
 
 source("~/Documents/flow_contribution/R/hatmatrix.R")
@@ -98,6 +98,6 @@ shortestRandomDiffs = function(filename="diabetes_indr"){
 
 #show streams in random algorithm
   writeLines(toJSON(CR[[1]]$streams),paste(filename,"randomstreams.json",sep="-"))
-  writeLines(toJSON(CS[[1]]$streams),paste(filename,"horteststreams.json",sep="-"))
+  writeLines(toJSON(CS[[1]]$streams),paste(filename,"shorteststreams.json",sep="-"))
 }
 
