@@ -10,16 +10,16 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (type=="long_binary"){
     Dpairs=pairwise(treat=t,event=r,n=n, data=D, studlab = id, sm= sm)
-    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T,tol.multiarm=T)
+    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T)
   } 
   
   if (type=="long_continuous"){
     Dpairs=pairwise(treat=t,mean=y,sd=sd,n=n,data=D, studlab =id, sm=sm)
-    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T,tol.multiarm=T)
+    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T)
   }
   
   if (type=="iv"){
-    metaNetw=netmeta(effect,se,t1,t2,id,data=D,sm=sm,comb.fixed =F,comb.random = T,tol.multiarm=T)
+    metaNetw=netmeta(effect,se,t1,t2,id,data=D,sm=sm,comb.fixed =F,comb.random = T)
   }
   
   #inconsistency
@@ -170,17 +170,21 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   NMAresults=as.data.frame(NMAresults)
   Pairwise=as.data.frame(Pairwise)
   
-  return(list(colNames=colnames(H),rowNames=rownames(H),
-	            rowNamesPairwise=rownames(Pairwise),
-	            colNamesPairwise=colnames(Pairwise),
-              Pairwise=Pairwise,
-	            NMAresults=NMAresults,
-	            rowNamesNMAresults=rownames(NMAresults),
-	            colNamesNMAresults=colnames(NMAresults),
-              NMAheterResults=NMAheterResults,
-              H=H,
-              dbt=dbt,
-              colNamesdbt = colnames(dbt),
-              netmetaObject = metaNetw
-              ))
+  return(list( colNames=colnames(H)
+             , rowNames=rownames(H)
+             , rowNamesPairwise=rownames(Pairwise)
+             , colNamesPairwise=colnames(Pairwise)
+             , Pairwise=Pairwise
+             , NMAresults=NMAresults
+             , rowNamesNMAresults=rownames(NMAresults)
+             , colNamesNMAresults=colnames(NMAresults)
+             , NMAheterResults=NMAheterResults
+             , H=H
+             , dbt=dbt
+             , colNamesdbt = colnames(dbt)
+             , netmetaObject = metaNetw
+             , model = model
+             , sm=sm
+             )
+  )
 }

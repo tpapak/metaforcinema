@@ -1,7 +1,7 @@
 Package: contribution
 Type: Package
 Title: contribution from flow
-Version: 0.2.0
+Version: 0.3.0
 Author: Thodoris Papakonstantinou
 Maintainer: Thodoris Papakonstantinou <theodoros.papakonstantinou@ispm.unibe.ch>
 Description: Computes contributions of direct evidence in Network meta-analysis
@@ -10,9 +10,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     igraph (>= 1.0.1)
-  , netmeta (== 0.9-6)
+  , netmeta (>= 0.9-6)
 Suggests:
       rlist
     , dplyr
     , nmadata
-
