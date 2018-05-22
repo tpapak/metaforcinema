@@ -1,17 +1,17 @@
-forestcinema<-function(gethatresult,civ,domain,sm){
+forestcinema<-function(nmaresults,civ,domain,sm){
   
-  library(ggplot2)
-  library(grid)
+  require(ggplot2)
+  require(grid)
 
   #####################set values#############################
   
   if(sm=="OR"| sm=="RR" | sm=="HR"){
-    NetwTE=exp(gethatresult[,"NMA treatment effect"])
-    NetworkLCI=exp(gethatresult[,"lower CI"])
-    NetworkUCI=exp(gethatresult[,"upper CI"])
-    NetworkLRCI=exp(gethatresult[,"lower PrI"])
-    NetworkURCI=exp(gethatresult[,"upper PrI"])
-    comparisons=rownames(gethatresult)
+    NetwTE=exp(nmaresults[,"NMA treatment effect"])
+    NetworkLCI=exp(nmaresults[,"lower CI"])
+    NetworkUCI=exp(nmaresults[,"upper CI"])
+    NetworkLRCI=exp(nmaresults[,"lower PrI"])
+    NetworkURCI=exp(nmaresults[,"upper PrI"])
+    comparisons=rownames(nmaresults)
     steps=length(NetwTE):1
     steps0=steps-0.2
     Effects=data.frame(NetwTE,steps,steps0,comparisons)
@@ -37,12 +37,12 @@ forestcinema<-function(gethatresult,civ,domain,sm){
   }
 
   if (sm=="MD" | sm=="SMD" | sm=="RD"){
-    NetwTE=gethatresult[,"NMA treatment effect"]
-    NetworkLCI=gethatresult[,"lower CI"]
-    NetworkUCI=gethatresult[,"upper CI"]
-    NetworkLRCI=gethatresult[,"lower PrI"]
-    NetworkURCI=gethatresult[,"upper PrI"]
-    comparisons=rownames(gethatresult)
+    NetwTE=nmaresults[,"NMA treatment effect"]
+    NetworkLCI=nmaresults[,"lower CI"]
+    NetworkUCI=nmaresults[,"upper CI"]
+    NetworkLRCI=nmaresults[,"lower PrI"]
+    NetworkURCI=nmaresults[,"upper PrI"]
+    comparisons=rownames(nmaresults)
     steps=length(NetwTE):1
     steps0=steps-0.2
     Effects=data.frame(NetwTE,steps,steps0,comparisons)
@@ -72,29 +72,28 @@ forestcinema<-function(gethatresult,civ,domain,sm){
   
   if(domain=="imprecision"){
     p=ggplot(Effects)+
-      geom_point(aes(Effects$NetwTE,Effects$steps),na.rm = T)+            
-      theme(plot.margin = unit(c(1,14,1,1), "lines"))
-    
-    p=p+geom_line(data=ForReapPlot,aes(NetwCI,StepsForPlot,group=StepsForPlot),na.rm = T)
-    p=p+geom_vline(xintercept = noeffect)
+      geom_point(aes(Effects$NetwTE,Effects$steps),na.rm = T) +
+      theme(plot.margin = unit(c(1,14,1,1), "lines")) +
+    geom_line(data=ForReapPlot,aes(NetwCI,StepsForPlot,group=StepsForPlot),na.rm = T) +
+    geom_vline(xintercept = noeffect) +
+    theme(axis.title.y=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          axis.title.x=element_blank())
 
-    p=p + theme(axis.title.y=element_blank(),
-                axis.text.y=element_blank(),
-                axis.ticks.y=element_blank(),
-                axis.title.x=element_blank())
-    
     m1=ggplot_build(p)$layout$panel_ranges[[1]]$x.range[2]+0.1*ggplot_build(p)$layout$panel_ranges[[1]]$x.range[2]
-  
-    p= p + annotate("rect", xmin = lciv, xmax = uciv, ymin = min(steps)-1, ymax = max(steps)+1,
-                    alpha = .2)
-  
+
+    p = p + annotate("rect", xmin = lciv, xmax = uciv, ymin = min(steps)-1, ymax = max(steps)+1, alpha = .2)
+
+
     for (i in 1:length(Effects$comparisons))  {
       p <- p + annotation_custom(
         grob = textGrob(label = Effects$comparisons[i], just="left"),
         ymin = Effects$steps[i],      
         ymax = Effects$steps[i],
-        xmin = m1,         
-        xmax = m1)
+        xmin = m1,
+        xmax = m1
+        )
     }    
   
   }

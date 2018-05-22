@@ -4,15 +4,14 @@
 getStudyContribution = function (hm, comparison) {
   contribution = getComparisonContribution(hm, comparison)
   model = hm$model
-  net = hm$netmetaObject
+  # main data frame
+  dfr = hm$forstudycontribution
   tau = 0
   if (model=="random"){
-    tau = net$tau
+    tau = hm$tau
   }
-  # main data frame
-  dfr=data.frame(net$studlab,net$treat1,net$treat2,net$seTE,net$seTE.adj)
-  dfr$comp=paste(dfr$net.treat1,dfr$net.treat2,sep=":")
-  dfr$w.adj = 1 / ((dfr$net.seTE.adj)^2+(tau)^2)
+  dfr$comp = paste(dfr$treat1,dfr$treat2,sep=":")
+  dfr$w.adj = 1 / ((dfr$seTE.adj)^2+(tau)^2)
  
   studyContribution = function (direct){
     aux = dfr[dfr$comp==direct,]
@@ -23,7 +22,7 @@ getStudyContribution = function (hm, comparison) {
       out = data.frame(study=''
                        , contribution=0
                        ,comparison='')
-      out$study = aux[row,"net.studlab"]
+      out$study = aux[row,"studlab"]
       out$contribution = w * per / normfac
       out$comparison = direct
       return(out)

@@ -99,8 +99,8 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   heterVarNtw=metaNetw$tau^2
   Qmeasures=matrix(c(metaNetw$Q,metaNetw$Q.heterogeneity,metaNetw$Q.inconsistency),nrow=1,ncol=3)
   colnames(Qmeasures) <- c( "Q overall"
-                            , "Q heterogeneity"
-                            , "Q inconsistency")
+                          , "Q heterogeneity"
+                          , "Q inconsistency")
   
   NMAheterResults=cbind(heterVarNtw,Qmeasures)
   
@@ -128,6 +128,26 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   NMA=cbind(c(TE.nma),c(seTE.nma),c(LCI.nma),c(UCI.nma),c(PrL.nma),c(PrU.nma),c(PropD))
   colnames(NMA)<-c("NMA treatment effect", "se treat effect", "lower CI", "upper CI", "lower PrI", "upper PrI","PropDirNetmeta")
+
+  print(rownames(metaNetw$TE.fixed))
+
+  forleaguetable = 
+              list( TE.fixed = metaNetw$TE.fixed
+              , lower.fixed  = metaNetw$lower.fixed
+              , upper.fixed  = metaNetw$upper.fixed
+              , TE.random    = metaNetw$TE.random
+              , lower.random = metaNetw$lower.random
+              , upper.random = metaNetw$upper.random
+              )
+
+  forstudycontribution =
+    data.frame( studlab=metaNetw$studlab
+              , treat1=metaNetw$treat1
+              , treat2=metaNetw$treat2
+              , seTE=metaNetw$seTE
+              , seTE.adj=metaNetw$seTE.adj
+              )
+  
   
   NMAresults=cbind(side,NMA)
 
@@ -182,9 +202,11 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
              , H=H
              , dbt=dbt
              , colNamesdbt = colnames(dbt)
-             , netmetaObject = metaNetw
              , model = model
              , sm=sm
+             , forleaguetable=forleaguetable
+             , forstudycontribution=forstudycontribution
+             , tau = metaNetw$tau
              )
   )
 }

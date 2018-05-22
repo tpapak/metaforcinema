@@ -1,9 +1,10 @@
-leaguetable<-function(gethatresult,model,sm){
+leaguetable<-function(fromhatmatrix,model,sm){
  
-  x=gethatresult
+  x=fromhatmatrix
   
   cilayout(bracket = "(", separator = ", ")
   oldopts <- options(width = 100)
+  result = NULL
   
   if (model=="fixed"){
     
@@ -28,7 +29,8 @@ leaguetable<-function(gethatresult,model,sm){
     nl.f <- matrix(nl.f, nrow = nrow(TE.fixed.x), ncol = ncol(TE.fixed.x))
     diag(nl.f) <- rownames(TE.fixed.x)
     
-    write.table(as.data.frame(nl.f),file="LeagueTableFixed.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
+    result = nl.f
+    #write.table(as.data.frame(nl.f),file="LeagueTableFixed.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
   }
  
   if (model=="random"){
@@ -54,7 +56,8 @@ leaguetable<-function(gethatresult,model,sm){
     nl.r <- matrix(nl.r, nrow = nrow(TE.random.x), ncol = ncol(TE.random.x))
     diag(nl.r) <- rownames(TE.random.x)
     
-    write.table(as.data.frame(nl.r),file="LeagueTableRandom.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
+    #write.table(as.data.frame(nl.r),file="LeagueTableRandom.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
+    result = nl.r
   }
-  
+  return(result)
 }
