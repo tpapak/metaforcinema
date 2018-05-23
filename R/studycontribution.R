@@ -1,14 +1,14 @@
 #Gives contributions of individual studies for a single comparison
-# arguments hm = hatmatrix list from getHatMatrix and comparison the string
+# arguments hatmatrix list from getHatMatrix and comparison the string
 # identifying the hatmatrix row separated by ":"
-getStudyContribution = function (hm, comparison) {
-  contribution = getComparisonContribution(hm, comparison)
-  model = hm$model
+getStudyContribution = function (hatmatrix, comparison) {
+  contribution = getComparisonContribution(hatmatrix, comparison)
+  model = hatmatrix$model
   # main data frame
-  dfr = hm$forstudycontribution
+  dfr = hatmatrix$forstudycontribution
   tau = 0
   if (model=="random"){
-    tau = hm$tau
+    tau = hatmatrix$tau
   }
   dfr$comp = paste(dfr$treat1,dfr$treat2,sep=":")
   dfr$w.adj = 1 / ((dfr$seTE.adj)^2+(tau)^2)
@@ -36,7 +36,10 @@ getStudyContribution = function (hm, comparison) {
   studies = unlist(lapply(outlist, function(r) {r$study}))
   contrs = unlist(lapply(outlist, function(r) {r$contribution}))
 
-  result=data.frame(study=studies,contribution=contrs,comparison=comps)
+  studyRow=data.frame(study=studies,contribution=contrs,comparison=comps)
 
-  return(result)
+  return(list( comparisonRow = contribution
+             , studyRow = studyRow
+             , row = comparison
+             ))
 }

@@ -1,14 +1,14 @@
 
-getComparisonContribution <- function(c1, comparison){
+getComparisonContribution <- function(hatmatrix, comparison){
 
   library(igraph)
 
-  # c1 <- getHatMatrix (indata,type,model,tau, sm)
-  directs <- c1$colNames
+  # hatmatrix <- getHatMatrix (indata,type,model,tau, sm)
+  directs <- hatmatrix$colNames
 
-  hatMatrix <- c1$H
+  hatMatrix <- hatmatrix$H
   
-  rownames(hatMatrix) <- c1$rowNames
+  rownames(hatMatrix) <- hatmatrix$rowNames
 
   split <- function (dir) {strsplit(dir,":")}
 
@@ -167,7 +167,7 @@ getComparisonContribution <- function(c1, comparison){
   names(contribution) <- directs
   contribution <- 100 * contribution
 
-  # return(list(gg=gg,g=dg,hatMatrix=c1,contribution=contribution))
+  # return(list(gg=gg,g=dg,hatMatrix=hatmatrix,contribution=contribution))
   return(list(contribution=contribution,
               names=directs))
 }
