@@ -13,12 +13,9 @@ install_github("esm-ispm-unibe-ch/nmadata")
 library(contribution)
 library(nmadata)
 
+studid = 501382
 
-testdata = lapply(nmadatanames(),readnma)
-
-hatmat = function (indata){
-  getHatMatrix(indata$data,type=longType(indata),model="random",sm="OR")
-}
+hatmat = getHatmatrixFromDB(studid,model="random","OR")
  
 #cl = mclapply(head(testdata,1),function(dts){
 cl = lapply(testdata,function(dts){

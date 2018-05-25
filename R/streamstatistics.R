@@ -164,7 +164,7 @@ comparisonStreamlengths = function(hatmatrix, comparison){
     flow <- min(unlist(lapply(splE, function(e){
       return(e$flow[])
     })))
-    streams <<- list.append(streams,data.frame(stream=floor(length(splE)),flow=flow))
+    streams <<- list.append(streams,data.frame(comparison=comparison,stream=floor(length(splE)),flow=flow))
     # print(c("to shortest path einai :",spl))
     gg <- Reduce(function(g, e){
       elabel <- e$label
@@ -217,9 +217,7 @@ comparisonStreamlengths = function(hatmatrix, comparison){
   names(contribution) <- directs
   contribution <- 100 * contribution
   
-  return(list( streams=streams
-  #return(data.frame( streams=streams
-       ))
+  return(streams)
 }
 
 streamStatistics = function (hatmatrix){
@@ -229,9 +227,9 @@ streamStatistics = function (hatmatrix){
 
   out = mapply(function(comp){
                 res = comparisonStreamlengths(hatmatrix,comp)
-                return(res)
+                return(streams=res)
               },rownames)
-  #print(out)
+  print(out)
   dof = getdof(hatmatrix)
 
   getStreamNumber = function(comp){
@@ -244,6 +242,12 @@ streamStatistics = function (hatmatrix){
     })
   }
 
+  getStream2 = function(comp){
+    lapply(comp, function(str){
+             return(data.frame(length=str$stream,comparison=str$comparison))
+    })
+  }
+
   getStreamFlow = function(comp){
     lapply(comp, function(str){
              return(str)
@@ -251,6 +255,7 @@ streamStatistics = function (hatmatrix){
   }
 
   histstr = unlist(lapply(out, getStream))
+  histstr2 = lapply(out, getStream2)
 
   numOfStreams = unlist(lapply(out, getStreamNumber))
 
@@ -258,8 +263,8 @@ streamStatistics = function (hatmatrix){
 
   groupByStream = function (lst){
     Reduce(function(acc,str){
-             i = str[[1]]
-             f = str[[2]]
+             i = str[[2]]
+             f = str[[3]]
              newacc = acc
              if (is.na(acc[i])) {
                newacc[i]=f
@@ -286,6 +291,7 @@ streamStatistics = function (hatmatrix){
   return(list( contributionperlength = contributionperlength
              , cummulativeContributionPerStream = cumsum(contributionperlength)
              , lengthfrequency = histstr
+             , lengthfrequency2 = histstr2
              , dof = dof
              , numOfStreams = numOfStreams
              ))
