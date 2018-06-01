@@ -138,6 +138,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
               , TE.random    = metaNetw$TE.random
               , lower.random = metaNetw$lower.random
               , upper.random = metaNetw$upper.random
+              , treatnames = rownames(metaNetw$TE.fixed)
               )
 
   forstudycontribution =

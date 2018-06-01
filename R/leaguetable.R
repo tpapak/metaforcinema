@@ -2,9 +2,10 @@ leaguetable<-function(fromhatmatrix,model,sm){
  
   x=fromhatmatrix
   
-  cilayout(bracket = "(", separator = ", ")
+  meta:::cilayout(bracket = "(", separator = ", ")
   oldopts <- options(width = 100)
   result = NULL
+  treatnames = x$treatnames
   
   if (model=="fixed"){
     
@@ -24,10 +25,10 @@ leaguetable<-function(fromhatmatrix,model,sm){
     lower.fixed.x <- round(lower.fixed.x, 3)
     upper.fixed.x <- round(upper.fixed.x, 3)
     ##
-    nl.f <- paste(TE.fixed.x, meta:::p.ci(lower.fixed.x, upper.fixed.x))
+    nl.f <- paste(TE.fixed.x, meta:::formatCI(lower.fixed.x, upper.fixed.x))
     ##
     nl.f <- matrix(nl.f, nrow = nrow(TE.fixed.x), ncol = ncol(TE.fixed.x))
-    diag(nl.f) <- rownames(TE.fixed.x)
+    diag(nl.f) <- treatnames
     
     result = nl.f
     #write.table(as.data.frame(nl.f),file="LeagueTableFixed.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
@@ -51,10 +52,10 @@ leaguetable<-function(fromhatmatrix,model,sm){
     lower.random.x <- round(lower.random.x, 3)
     upper.random.x <- round(upper.random.x, 3)
     ##
-    nl.r <- paste(TE.random.x, meta:::p.ci(lower.random.x, upper.random.x))
+    nl.r <- paste(TE.random.x, meta:::formatCI(lower.random.x, upper.random.x))
     ##
     nl.r <- matrix(nl.r, nrow = nrow(TE.random.x), ncol = ncol(TE.random.x))
-    diag(nl.r) <- rownames(TE.random.x)
+    diag(nl.r) <- treatnames
     
     #write.table(as.data.frame(nl.r),file="LeagueTableRandom.csv",sep=";",row.names=FALSE,col.names=FALSE,qmethod="double")
     result = nl.r

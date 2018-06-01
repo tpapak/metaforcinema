@@ -1,7 +1,7 @@
 Package: contribution
 Type: Package
 Title: contribution from flow
-Version: 0.3.0
+Version: 0.3.1
 Author: Thodoris Papakonstantinou
 Maintainer: Thodoris Papakonstantinou <theodoros.papakonstantinou@ispm.unibe.ch>
 Description: Computes contributions of direct evidence in Network meta-analysis
