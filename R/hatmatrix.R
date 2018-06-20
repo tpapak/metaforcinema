@@ -107,22 +107,22 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   #NMA treatment effects, confidence and prediction intervals
   
   if (model=="fixed"){
-    TE.nma=metaNetw$TE.fixed[lower.tri(metaNetw$TE.fixed)]
+    TE.nma=-metaNetw$TE.fixed[lower.tri(metaNetw$TE.fixed)]
     seTE.nma=metaNetw$seTE.fixed[lower.tri(metaNetw$seTE.fixed)]
-    LCI.nma=metaNetw$lower.fixed[lower.tri(metaNetw$lower.fixed)]
-    UCI.nma=metaNetw$upper.fixed[lower.tri(metaNetw$upper.fixed)]
-    PrL.nma=metaNetw$lower.predict[lower.tri(metaNetw$lower.predict)]
-    PrU.nma=metaNetw$upper.predict[lower.tri(metaNetw$upper.predict)]
+    UCI.nma=-metaNetw$lower.fixed[lower.tri(metaNetw$lower.fixed)]
+    LCI.nma=-metaNetw$upper.fixed[lower.tri(metaNetw$upper.fixed)]
+    PrU.nma=-metaNetw$lower.predict[lower.tri(metaNetw$lower.predict)]
+    PrL.nma=-metaNetw$upper.predict[lower.tri(metaNetw$upper.predict)]
     PropD=c(metaNetw$prop.direct.fixed)
   } 
 
   if (model=="random"){
-    TE.nma=metaNetw$TE.random[lower.tri(metaNetw$TE.random)]
+    TE.nma=-metaNetw$TE.random[lower.tri(metaNetw$TE.random)]
     seTE.nma=metaNetw$seTE.random[lower.tri(metaNetw$seTE.random)]
-    LCI.nma=metaNetw$lower.random[lower.tri(metaNetw$lower.random)]
-    UCI.nma=metaNetw$upper.random[lower.tri(metaNetw$upper.random)]
-    PrL.nma=metaNetw$lower.predict[lower.tri(metaNetw$lower.predict)]
-    PrU.nma=metaNetw$upper.predict[lower.tri(metaNetw$upper.predict)]
+    UCI.nma=-metaNetw$lower.random[lower.tri(metaNetw$lower.random)]
+    LCI.nma=-metaNetw$upper.random[lower.tri(metaNetw$upper.random)]
+    PrU.nma=-metaNetw$lower.predict[lower.tri(metaNetw$lower.predict)]
+    PrL.nma=-metaNetw$upper.predict[lower.tri(metaNetw$upper.predict)]
     PropD=c(metaNetw$prop.direct.random)
   } 
   
