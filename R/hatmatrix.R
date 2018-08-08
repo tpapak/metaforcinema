@@ -15,11 +15,11 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (type=="long_continuous"){
     Dpairs=pairwise(treat=t,mean=y,sd=sd,n=n,data=D, studlab =id, sm=sm)
-    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T)
+    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T, tol.multiarm=0.05)
   }
   
   if (type=="iv"){
-    metaNetw=netmeta(effect,se,t1,t2,id,data=D,sm=sm,comb.fixed =F,comb.random = T)
+    metaNetw=netmeta(effect,se,t1,t2,id,data=D,sm=sm,comb.fixed =F,comb.random = T, tol.multiarm=0.05)
   }
   
   #inconsistency

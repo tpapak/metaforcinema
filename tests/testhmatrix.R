@@ -1,10 +1,11 @@
 Sys.setenv(LANG = "en")
 rm(list=ls())
 library("devtools")
-install_github("esm-ispm-unibe-ch/flow_contribution")
-install_github("esm-ispm-unibe-ch/nmadata")
-library(nmadata)
-#source("../R/hatmatrix.R");
+#install_github("esm-ispm-unibe-ch/flow_contribution")
+#install_github("esm-ispm-unibe-ch/nmadata")
+#library(nmadata)
+source("R/hatmatrix.R");
+source("R/contributionrow.R");
 library(contribution)
 library(reshape2)
 library(jsonlite)
@@ -23,9 +24,14 @@ hatmatrixToJSON = function (filename="diabetes_indr") {
   print(jhm)
 }
 
-hatmatrixToJSON()
+#hatmatrixToJSON()
+indata = read.csv("tests/NMA_Max_Effic_indirect_problems.csv",header=TRUE,sep=",")
+#indata = read.csv("tests/NMA_Max_Effic_indirect.csv",header=TRUE,sep=",")
 
+C = getHatMatrix(indata,type="long_continuous",model="random",sm="SMD")
 
+print("the hat matrix is:")
+print(C)
 
 
 # Direct effects
