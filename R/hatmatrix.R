@@ -10,7 +10,7 @@ getHatMatrix <- function(indata,type,model="fixed",tau=NA, sm){
   
   if (type=="long_binary"){
     Dpairs=pairwise(treat=t,event=r,n=n, data=D, studlab = id, sm= sm)
-    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T)
+    metaNetw<-netmeta(TE,seTE,treat1,treat2,studlab,data=Dpairs,sm=sm,comb.fixed =F,comb.random = T, allstudies = T)
   } 
   
   if (type=="long_continuous"){
